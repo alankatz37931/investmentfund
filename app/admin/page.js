@@ -25,7 +25,7 @@ export default async function AdminIndexPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Administración</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Tus fondos. Cada uno tiene sus propios LPs, posiciones y fees.
+            Tus fondos. Cada uno tiene sus propios socios, posiciones y comisiones.
           </p>
         </div>
         <Link

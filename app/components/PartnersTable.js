@@ -7,7 +7,7 @@ const fmt = (n) =>
 
 export default function PartnersTable({ partners }) {
   if (!partners.length) {
-    return <p className="text-sm text-slate-500">No hay LPs registrados en este fondo.</p>;
+    return <p className="text-sm text-slate-500">No hay socios registrados en este fondo.</p>;
   }
 
   return (
@@ -15,10 +15,10 @@ export default function PartnersTable({ partners }) {
       <table className="min-w-full divide-y divide-slate-200">
         <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
           <tr>
-            <th className="px-4 py-3">LP</th>
+            <th className="px-4 py-3">Socio</th>
             <th className="px-4 py-3">Capital aportado</th>
             <th className="px-4 py-3">% del fondo</th>
-            <th className="px-4 py-3">Ganancia neta</th>
+            <th className="px-4 py-3">Ganancia</th>
             <th className="px-4 py-3">Valor actual</th>
           </tr>
         </thead>

@@ -24,8 +24,8 @@ export default function AssetsTable({ positions }) {
             <th className="px-4 py-3">Precio Actual</th>
             <th className="px-4 py-3">Día %</th>
             <th className="px-4 py-3">Valor Mercado</th>
-            <th className="px-4 py-3">P&amp;L</th>
-            <th className="px-4 py-3">P&amp;L %</th>
+            <th className="px-4 py-3">Ganancia</th>
+            <th className="px-4 py-3">Ganancia %</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-slate-100 text-sm">

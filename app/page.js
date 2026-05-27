@@ -55,10 +55,7 @@ export default async function HomePage({ searchParams }) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{data.fund.name}</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Última actualización:{' '}
-            {new Date(data.generatedAt).toLocaleString('es-ES')} · Performance fee{' '}
-            {data.fund.performanceFeePct}% · Mgmt fee{' '}
-            {data.fund.managementFeePct}%
+            Última actualización: {new Date(data.generatedAt).toLocaleString('es-ES')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -84,7 +81,7 @@ export default async function HomePage({ searchParams }) {
       </section>
 
       <section className="mt-10">
-        <h2 className="mb-4 text-xl font-semibold">Distribución entre LPs</h2>
+        <h2 className="mb-4 text-xl font-semibold">Distribución entre socios</h2>
         <PartnersTable partners={data.partners} />
       </section>
 

@@ -43,26 +43,26 @@ export default function QuarterlyReport({ data }) {
                 Valor del fondo: <strong>{fmt(data.totals.totalMarketValue)}</strong>
               </li>
               <li>
-                Capital LPs agregado: <strong>{fmt(data.totals.totalLpCapital)}</strong>
+                Capital de socios: <strong>{fmt(data.totals.totalLpCapital)}</strong>
               </li>
               <li>
-                P&amp;L bruto:{' '}
+                Ganancia bruta:{' '}
                 <strong>
                   {fmt(data.totals.grossPnl)} ({fmtPct(data.totals.grossPnlPct)})
                 </strong>
               </li>
               <li>
-                Performance fee ({data.fund.performanceFeePct}%):{' '}
+                Tu comisión ({data.fund.performanceFeePct}%):{' '}
                 <strong>{fmt(data.totals.performanceFee)}</strong>
               </li>
               {data.fund.managementFeePct > 0 && (
                 <li>
-                  Management fee anual ({data.fund.managementFeePct}%):{' '}
+                  Comisión anual ({data.fund.managementFeePct}%):{' '}
                   <strong>{fmt(data.totals.annualManagementFee)}</strong>
                 </li>
               )}
               <li>
-                Neto distribuido a LPs:{' '}
+                Ganancia para socios:{' '}
                 <strong>{fmt(data.totals.netPnlForLps)}</strong>
               </li>
             </ul>
@@ -84,13 +84,13 @@ export default function QuarterlyReport({ data }) {
 
           <section>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              3. Posiciones por LP
+              3. Distribución por socio
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               {data.partners.map((p) => (
                 <li key={p.id}>
                   <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
-                  Ganancia neta: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
+                  Ganancia: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
                   {fmt(p.currentValue)}
                 </li>
               ))}

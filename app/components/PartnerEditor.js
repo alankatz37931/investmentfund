@@ -59,7 +59,7 @@ export default function PartnerEditor({ initialPartners, fundId }) {
   }
 
   async function deleteRow(id) {
-    if (!confirm('¿Eliminar este LP? No se puede deshacer.')) return;
+    if (!confirm('¿Eliminar este socio? No se puede deshacer.')) return;
     setBusy(true);
     const res = await fetch(`/api/partners/${id}`, { method: 'DELETE' });
     setBusy(false);
@@ -196,7 +196,7 @@ export default function PartnerEditor({ initialPartners, fundId }) {
         className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
       >
         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          Agregar LP
+          Agregar socio
         </h3>
         <div className="mt-3 flex flex-wrap items-end gap-3">
           <input

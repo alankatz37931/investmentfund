@@ -20,12 +20,12 @@ export default function MetricsCard({ totals, fund }) {
           {fmt(totals.totalMarketValue)}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          Capital LPs: {fmt(totals.totalLpCapital)}
+          Capital socios: {fmt(totals.totalLpCapital)}
         </p>
       </div>
 
       <div className={`rounded-2xl ${pnlBg} p-6 shadow-sm ring-1 ${pnlRing}`}>
-        <p className="text-sm font-medium text-slate-600">P&amp;L bruto</p>
+        <p className="text-sm font-medium text-slate-600">Ganancia bruta</p>
         <p className={`mt-2 text-3xl font-bold tracking-tight ${pnlColor}`}>
           {fmt(totals.grossPnl)}
         </p>
@@ -36,18 +36,20 @@ export default function MetricsCard({ totals, fund }) {
 
       <div className="rounded-2xl bg-slate-900 p-6 text-white shadow-sm">
         <p className="text-sm font-medium text-slate-300">
-          Fee del manager ({fund.performanceFeePct}% performance)
+          Tu comisión ({fund.performanceFeePct}%)
         </p>
         <p className="mt-2 text-3xl font-bold tracking-tight">
           {fmt(totals.performanceFee)}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          {totals.performanceFee > 0 ? 'Sobre P&L bruto positivo' : 'Sin ganancias → sin fee'}
+          {totals.performanceFee > 0
+            ? 'Sobre la ganancia positiva'
+            : 'Sin ganancias → sin comisión'}
         </p>
       </div>
 
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-        <p className="text-sm font-medium text-slate-500">Neto a LPs</p>
+        <p className="text-sm font-medium text-slate-500">Para socios</p>
         <p
           className={`mt-2 text-3xl font-bold tracking-tight ${
             totals.netPnlForLps >= 0 ? 'text-emerald-600' : 'text-red-600'
@@ -55,9 +57,7 @@ export default function MetricsCard({ totals, fund }) {
         >
           {fmt(totals.netPnlForLps)}
         </p>
-        <p className="mt-1 text-xs text-slate-400">
-          P&amp;L bruto − performance fee
-        </p>
+        <p className="mt-1 text-xs text-slate-400">Ganancia bruta − tu comisión</p>
       </div>
     </div>
   );

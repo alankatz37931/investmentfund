@@ -37,7 +37,7 @@ export default function FundsList({ initialFunds }) {
   async function deleteFund(id) {
     if (
       !confirm(
-        '¿Eliminar este fondo? Esto borra TODOS sus LPs, posiciones y transacciones. Irreversible.'
+        '¿Eliminar este fondo? Esto borra TODOS sus socios, posiciones y transacciones. Irreversible.'
       )
     )
       return;
@@ -59,8 +59,8 @@ export default function FundsList({ initialFunds }) {
           <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th className="px-4 py-3">Fondo</th>
-              <th className="px-4 py-3">Management fee</th>
-              <th className="px-4 py-3">Performance fee</th>
+              <th className="px-4 py-3">Comisión anual</th>
+              <th className="px-4 py-3">Comisión sobre ganancias</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
           </thead>
@@ -118,7 +118,7 @@ export default function FundsList({ initialFunds }) {
             className="flex-1 min-w-[200px] rounded border border-slate-300 px-3 py-2 text-sm"
           />
           <div>
-            <label className="block text-xs text-slate-500">Mgmt fee %</label>
+            <label className="block text-xs text-slate-500">Comisión anual %</label>
             <input
               type="number"
               required
@@ -133,7 +133,7 @@ export default function FundsList({ initialFunds }) {
             />
           </div>
           <div>
-            <label className="block text-xs text-slate-500">Perf fee %</label>
+            <label className="block text-xs text-slate-500">Comisión sobre ganancias %</label>
             <input
               type="number"
               required

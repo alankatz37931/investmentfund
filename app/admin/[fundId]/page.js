@@ -39,7 +39,7 @@ export default async function AdminFundPage({ params }) {
       <header className="mb-8 flex items-end justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{fund.name}</h1>
-          <p className="mt-1 text-sm text-slate-500">Configuración, LPs y posiciones</p>
+          <p className="mt-1 text-sm text-slate-500">Configuración, socios y posiciones</p>
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -63,10 +63,10 @@ export default async function AdminFundPage({ params }) {
       </section>
 
       <section className="mb-10">
-        <h2 className="mb-4 text-xl font-semibold">LPs (Limited Partners)</h2>
+        <h2 className="mb-4 text-xl font-semibold">Socios</h2>
         <p className="mb-4 text-sm text-slate-500">
-          Estos son los socios cuyo capital se trackea. El manager (vos) no es
-          LP — no aparece acá. El % del fondo se deriva del capital aportado.
+          Personas cuyo capital se trackea. Vos como manager no aparecés acá.
+          El % del fondo se calcula automáticamente del capital aportado.
         </p>
         <PartnerEditor initialPartners={serializedPartners} fundId={id} />
       </section>

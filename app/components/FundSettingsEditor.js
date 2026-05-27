@@ -53,7 +53,7 @@ export default function FundSettingsEditor({ initialFund }) {
         </div>
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Management fee anual (%)
+            Comisión anual (%)
           </label>
           <input
             type="number"
@@ -67,11 +67,11 @@ export default function FundSettingsEditor({ initialFund }) {
             }
             className="mt-1 w-32 rounded border border-slate-300 px-3 py-2 text-sm"
           />
-          <p className="mt-1 text-xs text-slate-400">% del AUM por año</p>
+          <p className="mt-1 text-xs text-slate-400">% sobre el total del fondo, anual</p>
         </div>
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Performance fee (%)
+            Comisión sobre ganancias (%)
           </label>
           <input
             type="number"
@@ -85,7 +85,7 @@ export default function FundSettingsEditor({ initialFund }) {
             }
             className="mt-1 w-32 rounded border border-slate-300 px-3 py-2 text-sm"
           />
-          <p className="mt-1 text-xs text-slate-400">% de ganancias positivas</p>
+          <p className="mt-1 text-xs text-slate-400">% que cobrás cuando hay ganancia</p>
         </div>
         <button
           type="submit"
