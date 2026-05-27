@@ -38,7 +38,7 @@ export default function FundSettingsEditor({ initialFund }) {
       onSubmit={save}
       className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
     >
-      <div className="flex flex-wrap items-end gap-4">
+      <div className="flex flex-wrap items-start gap-4">
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
             Nombre del fondo
@@ -90,12 +90,12 @@ export default function FundSettingsEditor({ initialFund }) {
         <button
           type="submit"
           disabled={busy}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+          className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
         >
           {busy ? 'Guardando…' : 'Guardar'}
         </button>
         {saved && (
-          <span className="text-sm font-semibold text-emerald-600">✓ Guardado</span>
+          <span className="mt-7 text-sm font-semibold text-emerald-600">✓ Guardado</span>
         )}
       </div>
     </form>
