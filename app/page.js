@@ -3,6 +3,7 @@ import AssetsTable from './components/AssetsTable';
 import PartnersTable from './components/PartnersTable';
 import QuarterlyReport from './components/QuarterlyReport';
 import LogoutButton from './components/LogoutButton';
+import Link from 'next/link';
 import { getPortfolio } from '@/lib/portfolio';
 
 export const dynamic = 'force-dynamic';
@@ -40,6 +41,12 @@ export default async function HomePage() {
           <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
             En vivo
           </span>
+          <Link
+            href="/admin"
+            className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700"
+          >
+            Administrar
+          </Link>
           <LogoutButton />
         </div>
       </header>
