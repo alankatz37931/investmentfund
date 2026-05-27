@@ -6,39 +6,57 @@ const fmt = (n) =>
   });
 const fmtPct = (n) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
 
-export default function MetricsCard({ totals }) {
-  const positive = totals.totalPnl >= 0;
+export default function MetricsCard({ totals, fund }) {
+  const positive = totals.grossPnl >= 0;
   const pnlColor = positive ? 'text-emerald-600' : 'text-red-600';
   const pnlBg = positive ? 'bg-emerald-50' : 'bg-red-50';
   const pnlRing = positive ? 'ring-emerald-200' : 'ring-red-200';
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-        <p className="text-sm font-medium text-slate-500">Valor total del fondo</p>
+        <p className="text-sm font-medium text-slate-500">Valor del fondo</p>
         <p className="mt-2 text-3xl font-bold tracking-tight">
           {fmt(totals.totalMarketValue)}
         </p>
         <p className="mt-1 text-xs text-slate-400">
-          Capital inicial: {fmt(totals.totalCapital)}
+          Capital LPs: {fmt(totals.totalLpCapital)}
         </p>
       </div>
 
       <div className={`rounded-2xl ${pnlBg} p-6 shadow-sm ring-1 ${pnlRing}`}>
-        <p className="text-sm font-medium text-slate-600">P&amp;L Absoluto</p>
+        <p className="text-sm font-medium text-slate-600">P&amp;L bruto</p>
         <p className={`mt-2 text-3xl font-bold tracking-tight ${pnlColor}`}>
-          {fmt(totals.totalPnl)}
+          {fmt(totals.grossPnl)}
         </p>
         <p className={`mt-1 text-xs font-semibold ${pnlColor}`}>
-          {fmtPct(totals.totalPnlPct)}
+          {fmtPct(totals.grossPnlPct)}
+        </p>
+      </div>
+
+      <div className="rounded-2xl bg-slate-900 p-6 text-white shadow-sm">
+        <p className="text-sm font-medium text-slate-300">
+          Fee del manager ({fund.performanceFeePct}% performance)
+        </p>
+        <p className="mt-2 text-3xl font-bold tracking-tight">
+          {fmt(totals.performanceFee)}
+        </p>
+        <p className="mt-1 text-xs text-slate-400">
+          {totals.performanceFee > 0 ? 'Sobre P&L bruto positivo' : 'Sin ganancias → sin fee'}
         </p>
       </div>
 
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-        <p className="text-sm font-medium text-slate-500">Costo base</p>
-        <p className="mt-2 text-3xl font-bold tracking-tight">{fmt(totals.totalCost)}</p>
+        <p className="text-sm font-medium text-slate-500">Neto a LPs</p>
+        <p
+          className={`mt-2 text-3xl font-bold tracking-tight ${
+            totals.netPnlForLps >= 0 ? 'text-emerald-600' : 'text-red-600'
+          }`}
+        >
+          {fmt(totals.netPnlForLps)}
+        </p>
         <p className="mt-1 text-xs text-slate-400">
-          Suma de compras a precio promedio
+          P&amp;L bruto − performance fee
         </p>
       </div>
     </div>

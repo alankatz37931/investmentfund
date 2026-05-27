@@ -10,7 +10,7 @@ const fmt = (n) =>
     minimumFractionDigits: 2,
   });
 
-export default function PositionEditor({ initialPositions }) {
+export default function PositionEditor({ initialPositions, fundId }) {
   const [positions, setPositions] = useState(initialPositions);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
@@ -85,7 +85,7 @@ export default function PositionEditor({ initialPositions }) {
     const res = await fetch('/api/positions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newForm),
+      body: JSON.stringify({ ...newForm, fund_id: fundId }),
     });
     setBusy(false);
     if (!res.ok) {

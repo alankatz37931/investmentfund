@@ -10,31 +10,22 @@ const fmt = (n) =>
     minimumFractionDigits: 2,
   });
 
-export default function PartnerEditor({ initialPartners }) {
+export default function PartnerEditor({ initialPartners, fundId }) {
   const [partners, setPartners] = useState(initialPartners);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
-  const [newForm, setNewForm] = useState({
-    name: '',
-    capital_contributed: '',
-    participation_pct: '',
-  });
+  const [newForm, setNewForm] = useState({ name: '', capital_contributed: '' });
   const [busy, setBusy] = useState(false);
   const router = useRouter();
 
-  const totalPct = partners.reduce(
-    (acc, p) => acc + Number(p.participation_pct),
+  const totalCapital = partners.reduce(
+    (acc, p) => acc + Number(p.capital_contributed),
     0
   );
-  const pctOk = Math.abs(totalPct - 100) < 0.01;
 
   function startEdit(p) {
     setEditingId(p.id);
-    setEditForm({
-      name: p.name,
-      capital_contributed: p.capital_contributed,
-      participation_pct: p.participation_pct,
-    });
+    setEditForm({ name: p.name, capital_contributed: p.capital_contributed });
   }
 
   function cancelEdit() {
@@ -59,11 +50,7 @@ export default function PartnerEditor({ initialPartners }) {
     setPartners(
       partners.map((p) =>
         p.id === id
-          ? {
-              ...updated,
-              capital_contributed: Number(updated.capital_contributed),
-              participation_pct: Number(updated.participation_pct),
-            }
+          ? { ...updated, capital_contributed: Number(updated.capital_contributed) }
           : p
       )
     );
@@ -72,7 +59,7 @@ export default function PartnerEditor({ initialPartners }) {
   }
 
   async function deleteRow(id) {
-    if (!confirm('¿Eliminar este socio? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Eliminar este LP? No se puede deshacer.')) return;
     setBusy(true);
     const res = await fetch(`/api/partners/${id}`, { method: 'DELETE' });
     setBusy(false);
@@ -90,7 +77,7 @@ export default function PartnerEditor({ initialPartners }) {
     const res = await fetch('/api/partners', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newForm),
+      body: JSON.stringify({ ...newForm, fund_id: fundId }),
     });
     setBusy(false);
     if (!res.ok) {
@@ -101,13 +88,9 @@ export default function PartnerEditor({ initialPartners }) {
     const created = await res.json();
     setPartners([
       ...partners,
-      {
-        ...created,
-        capital_contributed: Number(created.capital_contributed),
-        participation_pct: Number(created.participation_pct),
-      },
+      { ...created, capital_contributed: Number(created.capital_contributed) },
     ]);
-    setNewForm({ name: '', capital_contributed: '', participation_pct: '' });
+    setNewForm({ name: '', capital_contributed: '' });
     router.refresh();
   }
 
@@ -119,13 +102,17 @@ export default function PartnerEditor({ initialPartners }) {
             <tr>
               <th className="px-4 py-3">Nombre</th>
               <th className="px-4 py-3">Capital aportado</th>
-              <th className="px-4 py-3">% Participación</th>
+              <th className="px-4 py-3">% del fondo (calc.)</th>
               <th className="px-4 py-3 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 text-sm">
-            {partners.map((p) =>
-              editingId === p.id ? (
+            {partners.map((p) => {
+              const sharePct =
+                totalCapital > 0
+                  ? (Number(p.capital_contributed) / totalCapital) * 100
+                  : 0;
+              return editingId === p.id ? (
                 <tr key={p.id} className="bg-amber-50">
                   <td className="px-4 py-3">
                     <input
@@ -151,21 +138,7 @@ export default function PartnerEditor({ initialPartners }) {
                       className="w-32 rounded border border-slate-300 px-2 py-1 text-sm"
                     />
                   </td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={editForm.participation_pct}
-                      onChange={(e) =>
-                        setEditForm({
-                          ...editForm,
-                          participation_pct: e.target.value,
-                        })
-                      }
-                      className="w-20 rounded border border-slate-300 px-2 py-1 text-sm"
-                    />{' '}
-                    %
-                  </td>
+                  <td className="px-4 py-3 text-slate-400">auto</td>
                   <td className="space-x-2 px-4 py-3 text-right">
                     <button
                       disabled={busy}
@@ -186,9 +159,7 @@ export default function PartnerEditor({ initialPartners }) {
                 <tr key={p.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3 font-semibold">{p.name}</td>
                   <td className="px-4 py-3">{fmt(p.capital_contributed)}</td>
-                  <td className="px-4 py-3">
-                    {Number(p.participation_pct).toFixed(2)}%
-                  </td>
+                  <td className="px-4 py-3 text-slate-600">{sharePct.toFixed(2)}%</td>
                   <td className="space-x-2 px-4 py-3 text-right">
                     <button
                       onClick={() => startEdit(p)}
@@ -204,21 +175,16 @@ export default function PartnerEditor({ initialPartners }) {
                     </button>
                   </td>
                 </tr>
-              )
-            )}
+              );
+            })}
           </tbody>
           <tfoot className="bg-slate-50 text-xs">
             <tr>
               <td className="px-4 py-2 font-semibold text-slate-500">Total</td>
-              <td
-                colSpan={2}
-                className={`px-4 py-2 font-semibold ${
-                  pctOk ? 'text-emerald-700' : 'text-amber-700'
-                }`}
-              >
-                Suma de participación: {totalPct.toFixed(2)}%{' '}
-                {pctOk ? '✓' : '(debería sumar 100%)'}
+              <td className="px-4 py-2 font-semibold text-slate-700">
+                {fmt(totalCapital)}
               </td>
+              <td className="px-4 py-2 text-slate-400">100.00%</td>
               <td></td>
             </tr>
           </tfoot>
@@ -230,7 +196,7 @@ export default function PartnerEditor({ initialPartners }) {
         className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200"
       >
         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-          Agregar socio
+          Agregar LP
         </h3>
         <div className="mt-3 flex flex-wrap items-end gap-3">
           <input
@@ -252,17 +218,6 @@ export default function PartnerEditor({ initialPartners }) {
             }
             className="w-40 rounded border border-slate-300 px-3 py-2 text-sm"
           />
-          <input
-            type="number"
-            required
-            step="0.01"
-            placeholder="% participación"
-            value={newForm.participation_pct}
-            onChange={(e) =>
-              setNewForm({ ...newForm, participation_pct: e.target.value })
-            }
-            className="w-36 rounded border border-slate-300 px-3 py-2 text-sm"
-          />
           <button
             type="submit"
             disabled={busy}
@@ -271,6 +226,10 @@ export default function PartnerEditor({ initialPartners }) {
             Agregar
           </button>
         </div>
+        <p className="mt-2 text-xs text-slate-400">
+          El % del fondo se calcula automáticamente como capital aportado /
+          capital total. No es editable manualmente.
+        </p>
       </form>
     </div>
   );

@@ -10,7 +10,6 @@ export async function PUT(req, { params }) {
     const partner = await updatePartner(Number(id), {
       name: String(body.name).trim(),
       capital_contributed: Number(body.capital_contributed),
-      participation_pct: Number(body.participation_pct),
     });
     if (!partner) {
       return NextResponse.json({ error: 'Socio no encontrado' }, { status: 404 });

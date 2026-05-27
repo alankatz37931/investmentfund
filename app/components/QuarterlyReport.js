@@ -21,7 +21,7 @@ export default function QuarterlyReport({ data }) {
         <div>
           <h2 className="text-xl font-semibold">Reporte trimestral</h2>
           <p className="text-sm text-slate-500">
-            Estructura del informe para socios — {quarter}
+            {data.fund.name} — {quarter}
           </p>
         </div>
         <button
@@ -40,25 +40,37 @@ export default function QuarterlyReport({ data }) {
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                Valor total del fondo:{' '}
-                <strong>{fmt(data.totals.totalMarketValue)}</strong>
+                Valor del fondo: <strong>{fmt(data.totals.totalMarketValue)}</strong>
               </li>
               <li>
-                Capital inicial agregado:{' '}
-                <strong>{fmt(data.totals.totalCapital)}</strong>
+                Capital LPs agregado: <strong>{fmt(data.totals.totalLpCapital)}</strong>
               </li>
               <li>
-                P&amp;L del período:{' '}
+                P&amp;L bruto:{' '}
                 <strong>
-                  {fmt(data.totals.totalPnl)} ({fmtPct(data.totals.totalPnlPct)})
+                  {fmt(data.totals.grossPnl)} ({fmtPct(data.totals.grossPnlPct)})
                 </strong>
+              </li>
+              <li>
+                Performance fee ({data.fund.performanceFeePct}%):{' '}
+                <strong>{fmt(data.totals.performanceFee)}</strong>
+              </li>
+              {data.fund.managementFeePct > 0 && (
+                <li>
+                  Management fee anual ({data.fund.managementFeePct}%):{' '}
+                  <strong>{fmt(data.totals.annualManagementFee)}</strong>
+                </li>
+              )}
+              <li>
+                Neto distribuido a LPs:{' '}
+                <strong>{fmt(data.totals.netPnlForLps)}</strong>
               </li>
             </ul>
           </section>
 
           <section>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              2. Posiciones abiertas ({data.positions.length})
+              2. Posiciones ({data.positions.length})
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               {data.positions.map((p) => (
@@ -72,13 +84,13 @@ export default function QuarterlyReport({ data }) {
 
           <section>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              3. Distribución a socios
+              3. Posiciones por LP
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               {data.partners.map((p) => (
                 <li key={p.id}>
-                  <strong>{p.name}</strong> ({p.participationPct.toFixed(2)}%) →
-                  Ganancia: <strong>{fmt(p.pnl)}</strong> · Valor actual:{' '}
+                  <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
+                  Ganancia neta: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
                   {fmt(p.currentValue)}
                 </li>
               ))}
@@ -90,14 +102,13 @@ export default function QuarterlyReport({ data }) {
               4. Notas del gestor
             </h3>
             <p className="mt-2 text-sm text-slate-600">
-              Espacio para comentarios cualitativos: tesis del trimestre, ajustes
-              de exposición, cambios estratégicos y outlook del próximo período.
+              Tesis del trimestre, ajustes de exposición, cambios estratégicos y
+              outlook del próximo período.
             </p>
           </section>
 
           <p className="border-t border-slate-100 pt-4 text-xs text-slate-400">
-            Reporte generado el {new Date(data.generatedAt).toLocaleString('es-ES')} ·
-            Investment Fund
+            Reporte generado el {new Date(data.generatedAt).toLocaleString('es-ES')}
           </p>
         </div>
       )}

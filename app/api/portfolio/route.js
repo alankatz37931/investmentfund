@@ -4,9 +4,10 @@ import { getPortfolio } from '@/lib/portfolio';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const data = await getPortfolio();
+    const fundId = req.nextUrl.searchParams.get('fund_id') || '1';
+    const data = await getPortfolio(fundId);
     return NextResponse.json(data);
   } catch (err) {
     console.error('[/api/portfolio] error:', err);

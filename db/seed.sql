@@ -1,19 +1,16 @@
--- Datos de ejemplo para arrancar el MVP
--- Ajusta nombres, capitales y posiciones a tu situación real
+-- Seed inicial: 1 fondo de ejemplo con 2 LPs y 4 posiciones
+-- El MANAGER (Alan) no es LP — no aparece acá
 
-INSERT INTO partners (name, capital_contributed, participation_pct) VALUES
-  ('Alan Katz (Managing Partner)', 50000.00, 50.00),
-  ('Socio Inversor A',             30000.00, 30.00),
-  ('Socio Inversor B',             20000.00, 20.00);
+INSERT INTO funds (id, name, management_fee_pct, performance_fee_pct)
+VALUES (1, 'Fondo Principal', 0, 20)
+ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO positions (ticker, quantity, avg_buy_price) VALUES
-  ('AAPL',  100, 175.50),
-  ('MSFT',   50, 380.20),
-  ('GOOGL',  30, 142.80),
-  ('NVDA',   20, 480.00);
+INSERT INTO partners (fund_id, name, capital_contributed) VALUES
+  (1, 'Socio Inversor A', 30000.00),
+  (1, 'Socio Inversor B', 20000.00);
 
-INSERT INTO transactions (ticker, type, quantity, price, notes) VALUES
-  ('AAPL',  'BUY', 100, 175.50, 'Compra inicial'),
-  ('MSFT',  'BUY',  50, 380.20, 'Compra inicial'),
-  ('GOOGL', 'BUY',  30, 142.80, 'Compra inicial'),
-  ('NVDA',  'BUY',  20, 480.00, 'Compra inicial');
+INSERT INTO positions (fund_id, ticker, quantity, avg_buy_price) VALUES
+  (1, 'AAPL',  100, 175.50),
+  (1, 'MSFT',   50, 380.20),
+  (1, 'GOOGL',  30, 142.80),
+  (1, 'NVDA',   20, 480.00);

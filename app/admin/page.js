@@ -1,39 +1,31 @@
 import Link from 'next/link';
-import PartnerEditor from '../components/PartnerEditor';
-import PositionEditor from '../components/PositionEditor';
-import { getPartners, getPositions } from '@/lib/db';
+import FundsList from '../components/FundsList';
+import { getFunds } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
 
-export default async function AdminPage() {
-  let partners = [];
-  let positions = [];
+export default async function AdminIndexPage() {
+  let funds = [];
   let error = null;
-
   try {
-    [partners, positions] = await Promise.all([getPartners(), getPositions()]);
+    funds = await getFunds();
   } catch (err) {
     error = err.message;
   }
 
-  const serializedPartners = partners.map((p) => ({
-    ...p,
-    capital_contributed: Number(p.capital_contributed),
-    participation_pct: Number(p.participation_pct),
-  }));
-  const serializedPositions = positions.map((p) => ({
-    ...p,
-    quantity: Number(p.quantity),
-    avg_buy_price: Number(p.avg_buy_price),
+  const serializedFunds = funds.map((f) => ({
+    ...f,
+    management_fee_pct: Number(f.management_fee_pct),
+    performance_fee_pct: Number(f.performance_fee_pct),
   }));
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Administrar fondo</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Administración</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Editar socios, posiciones y cantidades
+            Tus fondos. Cada uno tiene sus propios LPs, posiciones y fees.
           </p>
         </div>
         <Link
@@ -50,23 +42,9 @@ export default async function AdminPage() {
         </div>
       )}
 
-      <section className="mb-12">
-        <h2 className="mb-4 text-xl font-semibold">Socios</h2>
-        <p className="mb-4 text-sm text-slate-500">
-          La suma de % de participación debería dar 100%. Si no, el cálculo de
-          distribución de ganancias seguirá funcionando pero algunos socios no
-          recibirán su porción completa.
-        </p>
-        <PartnerEditor initialPartners={serializedPartners} />
-      </section>
-
       <section>
-        <h2 className="mb-4 text-xl font-semibold">Posiciones</h2>
-        <p className="mb-4 text-sm text-slate-500">
-          Tickers en mayúscula (AAPL, MSFT, etc.). El precio promedio es el costo
-          base por acción — Finnhub trae el precio actual automáticamente.
-        </p>
-        <PositionEditor initialPositions={serializedPositions} />
+        <h2 className="mb-4 text-xl font-semibold">Fondos</h2>
+        <FundsList initialFunds={serializedFunds} />
       </section>
     </main>
   );
