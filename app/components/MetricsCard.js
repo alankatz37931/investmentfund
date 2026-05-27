@@ -30,7 +30,7 @@ export default function MetricsCard({ totals, fund }) {
           {fmt(totals.grossPnl)}
         </p>
         <p className={`mt-1 text-xs font-semibold ${pnlColor}`}>
-          {fmtPct(totals.grossPnlPct)} sobre capital aportado
+          {fmtPct(totals.grossPnlPct)}
         </p>
       </div>
 
