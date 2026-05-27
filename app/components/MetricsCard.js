@@ -25,7 +25,7 @@ export default function MetricsCard({ totals, fund }) {
       </div>
 
       <div className={`rounded-2xl ${pnlBg} p-6 shadow-sm ring-1 ${pnlRing}`}>
-        <p className="text-sm font-medium text-slate-600">Ganancia bruta</p>
+        <p className="text-sm font-medium text-slate-500">Ganancia bruta</p>
         <p className={`mt-2 text-3xl font-bold tracking-tight ${pnlColor}`}>
           {fmt(totals.grossPnl)}
         </p>
@@ -38,10 +38,18 @@ export default function MetricsCard({ totals, fund }) {
         <p className="text-sm font-medium text-slate-500">
           Tu comisión ({fund.performanceFeePct}%)
         </p>
-        <p className="mt-2 text-3xl font-bold tracking-tight">
+        <p
+          className={`mt-2 text-3xl font-bold tracking-tight ${
+            totals.performanceFee > 0 ? 'text-emerald-600' : 'text-slate-900'
+          }`}
+        >
           {fmt(totals.performanceFee)}
         </p>
-        <p className="mt-1 text-xs font-semibold text-slate-500">
+        <p
+          className={`mt-1 text-xs font-semibold ${
+            totals.performanceFee > 0 ? 'text-emerald-600' : 'text-slate-400'
+          }`}
+        >
           {totals.totalLpCapital > 0
             ? fmtPct((totals.performanceFee / totals.totalLpCapital) * 100)
             : '—'}
