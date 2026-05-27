@@ -57,7 +57,15 @@ export default function MetricsCard({ totals, fund }) {
         >
           {fmt(totals.netPnlForLps)}
         </p>
-        <p className="mt-1 text-xs text-slate-400">Ganancia bruta − tu comisión</p>
+        <p
+          className={`mt-1 text-xs font-semibold ${
+            totals.netPnlForLps >= 0 ? 'text-emerald-600' : 'text-red-600'
+          }`}
+        >
+          {totals.totalLpCapital > 0
+            ? fmtPct((totals.netPnlForLps / totals.totalLpCapital) * 100)
+            : '—'}
+        </p>
       </div>
     </div>
   );
