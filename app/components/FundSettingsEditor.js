@@ -8,6 +8,7 @@ export default function FundSettingsEditor({ initialFund }) {
     name: initialFund.name,
     management_fee_pct: Number(initialFund.management_fee_pct),
     performance_fee_pct: Number(initialFund.performance_fee_pct),
+    cash_balance: Number(initialFund.cash_balance) || 0,
   });
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -86,6 +87,21 @@ export default function FundSettingsEditor({ initialFund }) {
             className="mt-1 w-32 rounded border border-slate-300 px-3 py-2 text-sm"
           />
           <p className="mt-1 text-xs text-slate-400">% que cobrás cuando hay ganancia</p>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Cash ($)
+          </label>
+          <input
+            type="number"
+            required
+            step="0.01"
+            min="0"
+            value={form.cash_balance}
+            onChange={(e) => setForm({ ...form, cash_balance: e.target.value })}
+            className="mt-1 w-36 rounded border border-slate-300 px-3 py-2 text-sm"
+          />
+          <p className="mt-1 text-xs text-slate-400">Plata sin invertir</p>
         </div>
         <button
           type="submit"

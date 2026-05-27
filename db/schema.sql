@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS funds (
     CHECK (management_fee_pct >= 0 AND management_fee_pct <= 100),
   performance_fee_pct NUMERIC(5, 2) NOT NULL DEFAULT 20
     CHECK (performance_fee_pct >= 0 AND performance_fee_pct <= 100),
+  cash_balance NUMERIC(14, 2) NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

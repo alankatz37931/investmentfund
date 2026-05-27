@@ -17,9 +17,12 @@ export default function MetricsCard({ totals, fund }) {
       <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
         <p className="text-sm font-medium text-slate-500">Valor del fondo</p>
         <p className="mt-2 text-3xl font-bold tracking-tight">
-          {fmt(totals.totalMarketValue)}
+          {fmt(totals.totalFundValue)}
         </p>
         <p className="mt-1 text-xs text-slate-400">
+          Posiciones {fmt(totals.positionsMarketValue)} · Cash {fmt(totals.cashBalance)}
+        </p>
+        <p className="text-xs text-slate-400">
           Capital socios: {fmt(totals.totalLpCapital)}
         </p>
       </div>

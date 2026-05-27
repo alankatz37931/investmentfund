@@ -24,6 +24,7 @@ export async function PUT(req, { params }) {
       name: String(body.name).trim(),
       management_fee_pct: Number(body.management_fee_pct),
       performance_fee_pct: Number(body.performance_fee_pct),
+      cash_balance: Number(body.cash_balance) || 0,
     });
     if (!fund) {
       return NextResponse.json({ error: 'Fondo no encontrado' }, { status: 404 });

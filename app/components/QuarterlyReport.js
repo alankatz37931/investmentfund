@@ -40,7 +40,9 @@ export default function QuarterlyReport({ data }) {
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                Valor del fondo: <strong>{fmt(data.totals.totalMarketValue)}</strong>
+                Valor del fondo: <strong>{fmt(data.totals.totalFundValue)}</strong>{' '}
+                (Posiciones {fmt(data.totals.positionsMarketValue)} + Cash{' '}
+                {fmt(data.totals.cashBalance)})
               </li>
               <li>
                 Capital de socios: <strong>{fmt(data.totals.totalLpCapital)}</strong>
