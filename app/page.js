@@ -3,6 +3,7 @@ import MetricsCard from './components/MetricsCard';
 import AssetsTable from './components/AssetsTable';
 import PartnersTable from './components/PartnersTable';
 import QuarterlyReport from './components/QuarterlyReport';
+import LogoutButton from './components/LogoutButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -46,9 +47,12 @@ export default async function HomePage() {
             Última actualización: {new Date(data.generatedAt).toLocaleString('es-ES')}
           </p>
         </div>
-        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-          En vivo
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            En vivo
+          </span>
+          <LogoutButton />
+        </div>
       </header>
 
       <MetricsCard totals={data.totals} />
