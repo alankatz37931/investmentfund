@@ -1,38 +1,27 @@
-import { headers } from 'next/headers';
 import MetricsCard from './components/MetricsCard';
 import AssetsTable from './components/AssetsTable';
 import PartnersTable from './components/PartnersTable';
 import QuarterlyReport from './components/QuarterlyReport';
 import LogoutButton from './components/LogoutButton';
+import { getPortfolio } from '@/lib/portfolio';
 
 export const dynamic = 'force-dynamic';
-
-async function fetchPortfolio() {
-  const h = await headers();
-  const host = h.get('host');
-  const protocol = host?.includes('localhost') ? 'http' : 'https';
-  const url = `${protocol}://${host}/api/portfolio`;
-
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`Error al cargar el portafolio (${res.status}): ${txt}`);
-  }
-  return res.json();
-}
 
 export default async function HomePage() {
   let data;
   try {
-    data = await fetchPortfolio();
+    data = await getPortfolio();
   } catch (err) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-10">
-        <h1 className="text-2xl font-bold text-red-600">Error</h1>
-        <p className="mt-2 text-sm text-slate-600">{err.message}</p>
+        <h1 className="text-2xl font-bold text-red-600">Error al cargar el portafolio</h1>
+        <pre className="mt-4 overflow-auto rounded-lg bg-slate-100 p-4 text-sm text-slate-700">
+          {err.message}
+        </pre>
         <p className="mt-4 text-sm text-slate-500">
-          Revisa que las variables de entorno (POSTGRES_*, FINNHUB_API_KEY) estén
-          configuradas y que el esquema de DB exista.
+          Verifica que <code>POSTGRES_*</code> y <code>FINNHUB_API_KEY</code> estén
+          configuradas, y que las tablas (<code>partners</code>, <code>positions</code>) existan
+          en la base de datos.
         </p>
       </main>
     );
