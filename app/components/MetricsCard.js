@@ -34,14 +34,14 @@ export default function MetricsCard({ totals, fund }) {
         </p>
       </div>
 
-      <div className="rounded-2xl bg-slate-900 p-6 text-white shadow-sm">
-        <p className="text-sm font-medium text-slate-300">
+      <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
+        <p className="text-sm font-medium text-slate-500">
           Tu comisión ({fund.performanceFeePct}%)
         </p>
         <p className="mt-2 text-3xl font-bold tracking-tight">
           {fmt(totals.performanceFee)}
         </p>
-        <p className="mt-1 text-xs font-semibold text-slate-300">
+        <p className="mt-1 text-xs font-semibold text-slate-500">
           {totals.totalLpCapital > 0
             ? fmtPct((totals.performanceFee / totals.totalLpCapital) * 100)
             : '—'}
