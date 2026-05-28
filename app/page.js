@@ -6,6 +6,7 @@ import QuarterlyReport from './components/QuarterlyReport';
 import LogoutButton from './components/LogoutButton';
 import FundSelector from './components/FundSelector';
 import RefreshButton from './components/RefreshButton';
+import AutoRefresh from './components/AutoRefresh';
 import { getPortfolio } from '@/lib/portfolio';
 import { getFunds } from '@/lib/db';
 
@@ -59,6 +60,7 @@ export default async function HomePage({ searchParams }) {
           <p className="mt-1 text-xs text-slate-500 sm:text-sm">
             Última actualización:{' '}
             {new Date(data.generatedAt).toLocaleString('es-ES')}
+            <span className="ml-2 text-slate-400">· auto cada 60s</span>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
@@ -73,6 +75,8 @@ export default async function HomePage({ searchParams }) {
           <LogoutButton />
         </div>
       </header>
+
+      <AutoRefresh intervalMs={60000} />
 
       <MetricsCard totals={data.totals} fund={data.fund} />
 
