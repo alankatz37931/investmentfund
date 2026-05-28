@@ -5,6 +5,7 @@ import PartnersTable from './components/PartnersTable';
 import QuarterlyReport from './components/QuarterlyReport';
 import LogoutButton from './components/LogoutButton';
 import FundSelector from './components/FundSelector';
+import RefreshButton from './components/RefreshButton';
 import { getPortfolio } from '@/lib/portfolio';
 import { getFunds } from '@/lib/db';
 
@@ -62,9 +63,7 @@ export default async function HomePage({ searchParams }) {
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <FundSelector funds={funds} currentFundId={currentFundId} />
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-            En vivo
-          </span>
+          <RefreshButton />
           <Link
             href="/admin"
             className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-slate-700"
