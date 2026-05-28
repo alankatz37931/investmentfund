@@ -16,17 +16,17 @@ export default function QuarterlyReport({ data }) {
   const quarter = `Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`;
 
   return (
-    <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-      <div className="flex items-center justify-between">
+    <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Reporte trimestral</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-lg font-semibold sm:text-xl">Reporte trimestral</h2>
+          <p className="text-xs text-slate-500 sm:text-sm">
             {data.fund.name} — {quarter}
           </p>
         </div>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700"
+          className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 sm:w-auto"
         >
           {open ? 'Ocultar reporte' : 'Ver reporte'}
         </button>

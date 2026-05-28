@@ -32,10 +32,10 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6">
+    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-8 sm:px-6">
       <form
         onSubmit={submit}
-        className="w-full max-w-sm rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200"
+        className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8"
       >
         <h1 className="text-2xl font-bold tracking-tight">Investment Fund</h1>
         <p className="mt-1 text-sm text-slate-500">Acceso privado</p>
