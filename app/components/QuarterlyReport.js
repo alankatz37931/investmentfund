@@ -89,11 +89,26 @@ export default function QuarterlyReport({ data }) {
                 {data.partners.map((p) => (
                   <li key={p.id}>
                     <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
-                    Ganancia: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
-                    {fmt(p.currentValue)}
+                    Disponible para retirar:{' '}
+                    <strong>{fmt(p.currentValue)}</strong>
                   </li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {!hasMultiplePartners && data.partners[0] && (
+            <section className="rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
+              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                Disponible para retirar
+              </p>
+              <p className="mt-1 text-2xl font-bold text-emerald-700">
+                {fmt(data.partners[0].currentValue)}
+              </p>
+              <p className="mt-1 text-xs text-emerald-700/80">
+                Capital inicial ({fmt(data.partners[0].capitalContributed)}) +
+                ganancia ({fmt(data.partners[0].netPnl)})
+              </p>
             </section>
           )}
 
