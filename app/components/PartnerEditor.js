@@ -14,7 +14,11 @@ export default function PartnerEditor({ initialPartners, fundId }) {
   const [partners, setPartners] = useState(initialPartners);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
-  const [newForm, setNewForm] = useState({ name: '', capital_contributed: '' });
+  const [newForm, setNewForm] = useState({
+    name: '',
+    capital_contributed: '',
+    is_manager: false,
+  });
   const [busy, setBusy] = useState(false);
   const router = useRouter();
 
@@ -25,7 +29,11 @@ export default function PartnerEditor({ initialPartners, fundId }) {
 
   function startEdit(p) {
     setEditingId(p.id);
-    setEditForm({ name: p.name, capital_contributed: p.capital_contributed });
+    setEditForm({
+      name: p.name,
+      capital_contributed: p.capital_contributed,
+      is_manager: !!p.is_manager,
+    });
   }
 
   function cancelEdit() {
@@ -47,12 +55,21 @@ export default function PartnerEditor({ initialPartners, fundId }) {
       return;
     }
     const updated = await res.json();
+    // Si este socio quedó como gerente, desmarcar otros en el state local
     setPartners(
-      partners.map((p) =>
-        p.id === id
-          ? { ...updated, capital_contributed: Number(updated.capital_contributed) }
-          : p
-      )
+      partners.map((p) => {
+        if (p.id === id) {
+          return {
+            ...updated,
+            capital_contributed: Number(updated.capital_contributed),
+            is_manager: !!updated.is_manager,
+          };
+        }
+        if (updated.is_manager) {
+          return { ...p, is_manager: false };
+        }
+        return p;
+      })
     );
     cancelEdit();
     router.refresh();
@@ -87,10 +104,16 @@ export default function PartnerEditor({ initialPartners, fundId }) {
     }
     const created = await res.json();
     setPartners([
-      ...partners,
-      { ...created, capital_contributed: Number(created.capital_contributed) },
+      ...partners.map((p) =>
+        created.is_manager ? { ...p, is_manager: false } : p
+      ),
+      {
+        ...created,
+        capital_contributed: Number(created.capital_contributed),
+        is_manager: !!created.is_manager,
+      },
     ]);
-    setNewForm({ name: '', capital_contributed: '' });
+    setNewForm({ name: '', capital_contributed: '', is_manager: false });
     router.refresh();
   }
 
@@ -101,6 +124,7 @@ export default function PartnerEditor({ initialPartners, fundId }) {
           <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
             <tr>
               <th className="whitespace-nowrap px-4 py-3">Nombre</th>
+              <th className="whitespace-nowrap px-4 py-3">Rol</th>
               <th className="whitespace-nowrap px-4 py-3">Capital aportado</th>
               <th className="whitespace-nowrap px-4 py-3">% del fondo</th>
               <th className="whitespace-nowrap px-4 py-3 text-right">Acciones</th>
@@ -123,6 +147,22 @@ export default function PartnerEditor({ initialPartners, fundId }) {
                       }
                       className="w-44 rounded border border-slate-300 px-2 py-1 text-sm"
                     />
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    <label className="inline-flex items-center gap-2 text-xs">
+                      <input
+                        type="checkbox"
+                        checked={!!editForm.is_manager}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            is_manager: e.target.checked,
+                          })
+                        }
+                        className="h-4 w-4 rounded border-slate-300"
+                      />
+                      <span className="text-slate-700">Gerente</span>
+                    </label>
                   </td>
                   <td className="whitespace-nowrap px-4 py-3">
                     <input
@@ -159,8 +199,21 @@ export default function PartnerEditor({ initialPartners, fundId }) {
                 </tr>
               ) : (
                 <tr key={p.id} className="hover:bg-slate-50">
-                  <td className="whitespace-nowrap px-4 py-3 font-semibold">{p.name}</td>
-                  <td className="whitespace-nowrap px-4 py-3">{fmt(p.capital_contributed)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 font-semibold">
+                    {p.name}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {p.is_manager ? (
+                      <span className="rounded-full bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-700">
+                        Gerente
+                      </span>
+                    ) : (
+                      <span className="text-xs text-slate-400">Socio</span>
+                    )}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {fmt(p.capital_contributed)}
+                  </td>
                   <td className="whitespace-nowrap px-4 py-3 text-slate-600">
                     {sharePct.toFixed(2)}%
                   </td>
@@ -186,7 +239,9 @@ export default function PartnerEditor({ initialPartners, fundId }) {
           </tbody>
           <tfoot className="bg-slate-50 text-xs">
             <tr>
-              <td className="whitespace-nowrap px-4 py-2 font-semibold text-slate-500">Total</td>
+              <td colSpan={2} className="whitespace-nowrap px-4 py-2 font-semibold text-slate-500">
+                Total
+              </td>
               <td className="whitespace-nowrap px-4 py-2 font-semibold text-slate-700">
                 {fmt(totalCapital)}
               </td>
@@ -224,6 +279,17 @@ export default function PartnerEditor({ initialPartners, fundId }) {
             }
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm sm:w-44"
           />
+          <label className="inline-flex items-center gap-2 text-sm text-slate-700">
+            <input
+              type="checkbox"
+              checked={newForm.is_manager}
+              onChange={(e) =>
+                setNewForm({ ...newForm, is_manager: e.target.checked })
+              }
+              className="h-4 w-4 rounded border-slate-300"
+            />
+            Es gerente
+          </label>
           <button
             type="submit"
             disabled={busy}
@@ -233,8 +299,8 @@ export default function PartnerEditor({ initialPartners, fundId }) {
           </button>
         </div>
         <p className="mt-3 text-xs text-slate-400">
-          El % del fondo se calcula automáticamente como capital aportado /
-          capital total. No es editable manualmente.
+          El gerente no paga comisión sobre su ganancia; en cambio, recibe la
+          comisión cobrada a los demás socios. Solo puede haber 1 gerente por fondo.
         </p>
       </form>
     </div>

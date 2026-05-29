@@ -28,6 +28,7 @@ export default async function AdminFundPage({ params }) {
   const serializedPartners = partners.map((p) => ({
     ...p,
     capital_contributed: Number(p.capital_contributed),
+    is_manager: !!p.is_manager,
   }));
   const serializedPositions = positions.map((p) => ({
     ...p,

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS partners (
   fund_id INTEGER NOT NULL REFERENCES funds(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   capital_contributed NUMERIC(14, 2) NOT NULL,
+  is_manager BOOLEAN NOT NULL DEFAULT FALSE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -43,6 +44,8 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_partners_fund     ON partners(fund_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_partners_one_manager_per_fund
+  ON partners(fund_id) WHERE is_manager = TRUE;
 CREATE INDEX IF NOT EXISTS idx_positions_fund    ON positions(fund_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_fund ON transactions(fund_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_ticker ON transactions(ticker);

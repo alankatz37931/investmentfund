@@ -32,6 +32,7 @@ export async function POST(req) {
       fund_id: Number(fund_id),
       name: String(name).trim(),
       capital_contributed: Number(capital_contributed),
+      is_manager: !!body.is_manager,
     });
 
     return NextResponse.json(partner, { status: 201 });

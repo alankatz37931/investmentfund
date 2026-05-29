@@ -34,10 +34,40 @@ export default function QuarterlyReport({ data }) {
   const qNum = Math.floor(now.getMonth() / 3) + 1;
   const quarter = `Q${qNum} ${now.getFullYear()} (${QUARTER_MONTHS[qNum - 1]})`;
 
-  const hasMultiplePartners = data.partners.length > 1;
+  const hasManager = data.fund.hasManagerPartner;
+  const visiblePartners = data.partners.filter((p) => !p.isManager);
+  const hasMultipleVisible = visiblePartners.length > 1;
   const hasPerformanceFee = data.fund.performanceFeePct > 0;
   const hasManagementFee = data.fund.managementFeePct > 0;
-  const grossPositive = data.totals.grossPnl >= 0;
+
+  // Totales que se muestran en el reporte:
+  //  - Si NO hay gerente partner → totales del fondo entero
+  //  - Si hay gerente partner    → totales solo de los socios visibles (no gerente)
+  const reportCapital = hasManager
+    ? visiblePartners.reduce((acc, p) => acc + p.capitalContributed, 0)
+    : data.totals.totalLpCapital;
+
+  const reportCurrentValue = hasManager
+    ? visiblePartners.reduce((acc, p) => acc + p.currentValue, 0)
+    : data.totals.totalFundValue;
+
+  // "Ganancia bruta" mostrada = ganancia sobre el capital visible.
+  // Sin gerente: igual al grossPnl del fondo.
+  // Con gerente: la ganancia bruta atribuible a los socios = sum de (pro-rata - fee paid + fee paid)
+  //              = ganancia pre-fee de la porción LP del fondo.
+  const lpProRataGross = hasManager
+    ? data.totals.grossPnl * (reportCapital / (data.totals.totalLpCapital || 1))
+    : data.totals.grossPnl;
+  const reportGrossPnlPct =
+    reportCapital > 0 ? (lpProRataGross / reportCapital) * 100 : 0;
+
+  // Ganancia neta para socios = sumatoria de netPnl de socios visibles
+  const reportNetPnlForVisible = visiblePartners.reduce(
+    (acc, p) => acc + p.netPnl,
+    0
+  );
+
+  const grossPositive = lpProRataGross >= 0;
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
@@ -59,14 +89,13 @@ export default function QuarterlyReport({ data }) {
       {open && (
         <div className="mt-6 space-y-5">
           <dl className="divide-y divide-slate-100 overflow-hidden rounded-xl bg-slate-50/60 ring-1 ring-slate-200">
-            <Row
-              label="Valor del fondo"
-              value={fmt(data.totals.totalFundValue)}
-            />
-            <Row
-              label="Capital inicial"
-              value={fmt(data.totals.totalLpCapital)}
-            />
+            {!hasManager && (
+              <Row
+                label="Valor del fondo"
+                value={fmt(data.totals.totalFundValue)}
+              />
+            )}
+            <Row label="Capital inicial" value={fmt(reportCapital)} />
             <Row
               label="Ganancia bruta"
               value={
@@ -76,12 +105,14 @@ export default function QuarterlyReport({ data }) {
                       grossPositive ? 'text-emerald-600' : 'text-red-600'
                     }`}
                   >
-                    {fmtPct(data.totals.grossPnlPct)}
+                    {fmtPct(reportGrossPnlPct)}
                   </span>
                   <span
-                    className={grossPositive ? 'text-emerald-700' : 'text-red-700'}
+                    className={
+                      grossPositive ? 'text-emerald-700' : 'text-red-700'
+                    }
                   >
-                    {fmt(data.totals.grossPnl)}
+                    {fmt(lpProRataGross)}
                   </span>
                 </span>
               }
@@ -89,33 +120,33 @@ export default function QuarterlyReport({ data }) {
             {hasPerformanceFee && (
               <Row
                 label="Ganancia para socios"
-                value={fmt(data.totals.netPnlForLps)}
+                value={fmt(reportNetPnlForVisible)}
               />
             )}
-            {hasManagementFee && (
+            {hasManagementFee && !hasManager && (
               <Row
                 label={`Comisión anual (${data.fund.managementFeePct}%)`}
                 value={fmt(data.totals.annualManagementFee)}
               />
             )}
-            {!hasMultiplePartners && data.partners[0] && (
+            {!hasMultipleVisible && visiblePartners[0] && (
               <Row
                 label="Disponible para retirar"
                 value={
                   <span className="text-emerald-700">
-                    {fmt(data.partners[0].currentValue)}
+                    {fmt(visiblePartners[0].currentValue)}
                   </span>
                 }
               />
             )}
           </dl>
 
-          {hasMultiplePartners && (
+          {hasMultipleVisible && (
             <section className="space-y-4">
               <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
                 Distribución entre socios
               </h3>
-              {data.partners.map((p) => {
+              {visiblePartners.map((p) => {
                 const positive = p.netPnl >= 0;
                 return (
                   <div key={p.id}>
