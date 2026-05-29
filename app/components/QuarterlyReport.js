@@ -72,16 +72,16 @@ export default function QuarterlyReport({ data }) {
               value={
                 <span>
                   <span
-                    className={grossPositive ? 'text-emerald-700' : 'text-red-700'}
-                  >
-                    {fmt(data.totals.grossPnl)}
-                  </span>
-                  <span
-                    className={`ml-2 text-xs font-normal ${
+                    className={`mr-2 text-xs font-normal ${
                       grossPositive ? 'text-emerald-600' : 'text-red-600'
                     }`}
                   >
                     {fmtPct(data.totals.grossPnlPct)}
+                  </span>
+                  <span
+                    className={grossPositive ? 'text-emerald-700' : 'text-red-700'}
+                  >
+                    {fmt(data.totals.grossPnl)}
                   </span>
                 </span>
               }
