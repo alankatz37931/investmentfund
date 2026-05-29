@@ -58,7 +58,7 @@ export default function QuarterlyReport({ data }) {
                 {fmt(data.totals.cashBalance)})
               </li>
               <li>
-                Capital de socios: <strong>{fmt(data.totals.totalLpCapital)}</strong>
+                Capital inicial: <strong>{fmt(data.totals.totalLpCapital)}</strong>
               </li>
               <li>
                 Ganancia bruta:{' '}
@@ -67,16 +67,10 @@ export default function QuarterlyReport({ data }) {
                 </strong>
               </li>
               {hasPerformanceFee && (
-                <>
-                  <li>
-                    Tu comisión ({data.fund.performanceFeePct}%):{' '}
-                    <strong>{fmt(data.totals.performanceFee)}</strong>
-                  </li>
-                  <li>
-                    Ganancia para socios:{' '}
-                    <strong>{fmt(data.totals.netPnlForLps)}</strong>
-                  </li>
-                </>
+                <li>
+                  Ganancia para socios:{' '}
+                  <strong>{fmt(data.totals.netPnlForLps)}</strong>
+                </li>
               )}
               {hasManagementFee && (
                 <li>
