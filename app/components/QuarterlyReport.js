@@ -98,23 +98,17 @@ export default function QuarterlyReport({ data }) {
                 value={fmt(data.totals.annualManagementFee)}
               />
             )}
+            {!hasMultiplePartners && data.partners[0] && (
+              <Row
+                label="Disponible para retirar"
+                value={
+                  <span className="text-emerald-700">
+                    {fmt(data.partners[0].currentValue)}
+                  </span>
+                }
+              />
+            )}
           </dl>
-
-          {!hasMultiplePartners && data.partners[0] && (
-            <section className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/70 p-5 ring-1 ring-emerald-200">
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
-                Disponible para retirar
-              </p>
-              <p className="mt-1 text-3xl font-bold tracking-tight text-emerald-700">
-                {fmt(data.partners[0].currentValue)}
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-emerald-700/80">
-                <span>Capital {fmt(data.partners[0].capitalContributed)}</span>
-                <span className="text-emerald-600/60">+</span>
-                <span>Ganancia {fmt(data.partners[0].netPnl)}</span>
-              </div>
-            </section>
-          )}
 
           {hasMultiplePartners && (
             <section>
