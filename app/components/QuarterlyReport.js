@@ -9,7 +9,6 @@ const fmt = (n) =>
     minimumFractionDigits: 2,
   });
 const fmtPct = (n) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
-const fmtSignedCurrency = (n) => `${n >= 0 ? '+' : ''}${fmt(n)}`;
 
 const QUARTER_MONTHS = [
   'enero – marzo',
@@ -49,16 +48,16 @@ export default function QuarterlyReport({ data }) {
         <div className="mt-6 space-y-6">
           <section>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              1. Resumen ejecutivo
+              Resumen ejecutivo
             </h3>
             <ul className="mt-2 space-y-1 text-sm">
               <li>
-                Valor del fondo: <strong>{fmt(data.totals.totalFundValue)}</strong>{' '}
-                (Posiciones {fmt(data.totals.positionsMarketValue)} + Cash{' '}
-                {fmt(data.totals.cashBalance)})
+                Valor del fondo:{' '}
+                <strong>{fmt(data.totals.totalFundValue)}</strong>
               </li>
               <li>
-                Capital inicial: <strong>{fmt(data.totals.totalLpCapital)}</strong>
+                Capital inicial:{' '}
+                <strong>{fmt(data.totals.totalLpCapital)}</strong>
               </li>
               <li>
                 Ganancia bruta:{' '}
@@ -81,31 +80,10 @@ export default function QuarterlyReport({ data }) {
             </ul>
           </section>
 
-          <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              2. Posiciones ({data.positions.length})
-            </h3>
-            <ul className="mt-2 space-y-1 text-sm">
-              {data.positions.map((p) => (
-                <li key={p.ticker}>
-                  <strong>{p.ticker}</strong> — {p.quantity} unid. · Costo{' '}
-                  {fmt(p.cost)} · Valor {fmt(p.marketValue)} ·{' '}
-                  <span
-                    className={
-                      p.pnl >= 0 ? 'text-emerald-700' : 'text-red-700'
-                    }
-                  >
-                    {fmtSignedCurrency(p.pnl)} ({fmtPct(p.pnlPct)})
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
           {hasMultiplePartners && (
             <section>
               <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                3. Distribución por socio
+                Distribución por socio
               </h3>
               <ul className="mt-2 space-y-1 text-sm">
                 {data.partners.map((p) => (
