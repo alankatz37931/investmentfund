@@ -111,28 +111,49 @@ export default function QuarterlyReport({ data }) {
           </dl>
 
           {hasMultiplePartners && (
-            <section>
-              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                Disponible para retirar
+            <section className="space-y-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Distribución entre socios
               </h3>
-              <dl className="divide-y divide-emerald-100 overflow-hidden rounded-xl bg-emerald-50 ring-1 ring-emerald-200">
-                {data.partners.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex items-baseline justify-between gap-4 px-4 py-3"
-                  >
-                    <dt className="text-sm">
-                      <span className="font-semibold text-emerald-900">{p.name}</span>
-                      <span className="ml-2 text-xs text-emerald-700/70">
-                        {p.shareOfFundPct.toFixed(2)}%
+              {data.partners.map((p) => {
+                const positive = p.netPnl >= 0;
+                return (
+                  <div key={p.id}>
+                    <p className="mb-2 text-sm">
+                      <span className="font-semibold text-slate-900">{p.name}</span>
+                      <span className="ml-2 text-xs text-slate-500">
+                        {p.shareOfFundPct.toFixed(2)}% del fondo
                       </span>
-                    </dt>
-                    <dd className="text-base font-bold text-emerald-700">
-                      {fmt(p.currentValue)}
-                    </dd>
+                    </p>
+                    <dl className="divide-y divide-slate-100 overflow-hidden rounded-xl bg-slate-50/60 ring-1 ring-slate-200">
+                      <Row
+                        label="Capital inicial"
+                        value={fmt(p.capitalContributed)}
+                      />
+                      <Row
+                        label="Ganancia"
+                        value={
+                          <span
+                            className={
+                              positive ? 'text-emerald-700' : 'text-red-700'
+                            }
+                          >
+                            {fmt(p.netPnl)}
+                          </span>
+                        }
+                      />
+                      <Row
+                        label="Disponible para retirar"
+                        value={
+                          <span className="text-emerald-700">
+                            {fmt(p.currentValue)}
+                          </span>
+                        }
+                      />
+                    </dl>
                   </div>
-                ))}
-              </dl>
+                );
+              })}
             </section>
           )}
 
