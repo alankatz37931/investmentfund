@@ -9,11 +9,24 @@ const fmt = (n) =>
     minimumFractionDigits: 2,
   });
 const fmtPct = (n) => `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
+const fmtSignedCurrency = (n) => `${n >= 0 ? '+' : ''}${fmt(n)}`;
+
+const QUARTER_MONTHS = [
+  'enero – marzo',
+  'abril – junio',
+  'julio – septiembre',
+  'octubre – diciembre',
+];
 
 export default function QuarterlyReport({ data }) {
   const [open, setOpen] = useState(false);
   const now = new Date();
-  const quarter = `Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`;
+  const qNum = Math.floor(now.getMonth() / 3) + 1;
+  const quarter = `Q${qNum} ${now.getFullYear()} (${QUARTER_MONTHS[qNum - 1]})`;
+
+  const hasMultiplePartners = data.partners.length > 1;
+  const hasPerformanceFee = data.fund.performanceFeePct > 0;
+  const hasManagementFee = data.fund.managementFeePct > 0;
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
@@ -53,20 +66,24 @@ export default function QuarterlyReport({ data }) {
                   {fmt(data.totals.grossPnl)} ({fmtPct(data.totals.grossPnlPct)})
                 </strong>
               </li>
-              <li>
-                Tu comisión ({data.fund.performanceFeePct}%):{' '}
-                <strong>{fmt(data.totals.performanceFee)}</strong>
-              </li>
-              {data.fund.managementFeePct > 0 && (
+              {hasPerformanceFee && (
+                <>
+                  <li>
+                    Tu comisión ({data.fund.performanceFeePct}%):{' '}
+                    <strong>{fmt(data.totals.performanceFee)}</strong>
+                  </li>
+                  <li>
+                    Ganancia para socios:{' '}
+                    <strong>{fmt(data.totals.netPnlForLps)}</strong>
+                  </li>
+                </>
+              )}
+              {hasManagementFee && (
                 <li>
                   Comisión anual ({data.fund.managementFeePct}%):{' '}
                   <strong>{fmt(data.totals.annualManagementFee)}</strong>
                 </li>
               )}
-              <li>
-                Ganancia para socios:{' '}
-                <strong>{fmt(data.totals.netPnlForLps)}</strong>
-              </li>
             </ul>
           </section>
 
@@ -77,37 +94,36 @@ export default function QuarterlyReport({ data }) {
             <ul className="mt-2 space-y-1 text-sm">
               {data.positions.map((p) => (
                 <li key={p.ticker}>
-                  <strong>{p.ticker}</strong> — {p.quantity} unid. ·{' '}
-                  {fmt(p.marketValue)} ({fmtPct(p.pnlPct)})
+                  <strong>{p.ticker}</strong> — {p.quantity} unid. · Costo{' '}
+                  {fmt(p.cost)} · Valor {fmt(p.marketValue)} ·{' '}
+                  <span
+                    className={
+                      p.pnl >= 0 ? 'text-emerald-700' : 'text-red-700'
+                    }
+                  >
+                    {fmtSignedCurrency(p.pnl)} ({fmtPct(p.pnlPct)})
+                  </span>
                 </li>
               ))}
             </ul>
           </section>
 
-          <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              3. Distribución por socio
-            </h3>
-            <ul className="mt-2 space-y-1 text-sm">
-              {data.partners.map((p) => (
-                <li key={p.id}>
-                  <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
-                  Ganancia: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
-                  {fmt(p.currentValue)}
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              4. Notas del gestor
-            </h3>
-            <p className="mt-2 text-sm text-slate-600">
-              Tesis del trimestre, ajustes de exposición, cambios estratégicos y
-              outlook del próximo período.
-            </p>
-          </section>
+          {hasMultiplePartners && (
+            <section>
+              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+                3. Distribución por socio
+              </h3>
+              <ul className="mt-2 space-y-1 text-sm">
+                {data.partners.map((p) => (
+                  <li key={p.id}>
+                    <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
+                    Ganancia: <strong>{fmt(p.netPnl)}</strong> · Valor actual:{' '}
+                    {fmt(p.currentValue)}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <p className="border-t border-slate-100 pt-4 text-xs text-slate-400">
             Reporte generado el {new Date(data.generatedAt).toLocaleString('es-ES')}
