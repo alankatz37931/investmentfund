@@ -17,6 +17,17 @@ const QUARTER_MONTHS = [
   'octubre – diciembre',
 ];
 
+function Row({ label, value, valueClass = '' }) {
+  return (
+    <div className="flex items-baseline justify-between gap-4 px-4 py-3">
+      <dt className="text-sm text-slate-600">{label}</dt>
+      <dd className={`text-sm font-semibold text-slate-900 ${valueClass}`}>
+        {value}
+      </dd>
+    </div>
+  );
+}
+
 export default function QuarterlyReport({ data }) {
   const [open, setOpen] = useState(false);
   const now = new Date();
@@ -26,6 +37,7 @@ export default function QuarterlyReport({ data }) {
   const hasMultiplePartners = data.partners.length > 1;
   const hasPerformanceFee = data.fund.performanceFeePct > 0;
   const hasManagementFee = data.fund.managementFeePct > 0;
+  const grossPositive = data.totals.grossPnl >= 0;
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
@@ -45,75 +57,93 @@ export default function QuarterlyReport({ data }) {
       </div>
 
       {open && (
-        <div className="mt-6 space-y-6">
-          <section>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-              Resumen ejecutivo
-            </h3>
-            <ul className="mt-2 space-y-1 text-sm">
-              <li>
-                Valor del fondo:{' '}
-                <strong>{fmt(data.totals.totalFundValue)}</strong>
-              </li>
-              <li>
-                Capital inicial:{' '}
-                <strong>{fmt(data.totals.totalLpCapital)}</strong>
-              </li>
-              <li>
-                Ganancia bruta:{' '}
-                <strong>
-                  {fmt(data.totals.grossPnl)} ({fmtPct(data.totals.grossPnlPct)})
-                </strong>
-              </li>
-              {hasPerformanceFee && (
-                <li>
-                  Ganancia para socios:{' '}
-                  <strong>{fmt(data.totals.netPnlForLps)}</strong>
-                </li>
-              )}
-              {hasManagementFee && (
-                <li>
-                  Comisión anual ({data.fund.managementFeePct}%):{' '}
-                  <strong>{fmt(data.totals.annualManagementFee)}</strong>
-                </li>
-              )}
-            </ul>
-          </section>
-
-          {hasMultiplePartners && (
-            <section>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
-                Distribución por socio
-              </h3>
-              <ul className="mt-2 space-y-1 text-sm">
-                {data.partners.map((p) => (
-                  <li key={p.id}>
-                    <strong>{p.name}</strong> ({p.shareOfFundPct.toFixed(2)}%) →
-                    Disponible para retirar:{' '}
-                    <strong>{fmt(p.currentValue)}</strong>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+        <div className="mt-6 space-y-5">
+          <dl className="divide-y divide-slate-100 overflow-hidden rounded-xl bg-slate-50/60 ring-1 ring-slate-200">
+            <Row
+              label="Valor del fondo"
+              value={fmt(data.totals.totalFundValue)}
+            />
+            <Row
+              label="Capital inicial"
+              value={fmt(data.totals.totalLpCapital)}
+            />
+            <Row
+              label="Ganancia bruta"
+              value={
+                <span>
+                  <span
+                    className={grossPositive ? 'text-emerald-700' : 'text-red-700'}
+                  >
+                    {fmt(data.totals.grossPnl)}
+                  </span>
+                  <span
+                    className={`ml-2 text-xs font-normal ${
+                      grossPositive ? 'text-emerald-600' : 'text-red-600'
+                    }`}
+                  >
+                    {fmtPct(data.totals.grossPnlPct)}
+                  </span>
+                </span>
+              }
+            />
+            {hasPerformanceFee && (
+              <Row
+                label="Ganancia para socios"
+                value={fmt(data.totals.netPnlForLps)}
+              />
+            )}
+            {hasManagementFee && (
+              <Row
+                label={`Comisión anual (${data.fund.managementFeePct}%)`}
+                value={fmt(data.totals.annualManagementFee)}
+              />
+            )}
+          </dl>
 
           {!hasMultiplePartners && data.partners[0] && (
-            <section className="rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
+            <section className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/70 p-5 ring-1 ring-emerald-200">
               <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
                 Disponible para retirar
               </p>
-              <p className="mt-1 text-2xl font-bold text-emerald-700">
+              <p className="mt-1 text-3xl font-bold tracking-tight text-emerald-700">
                 {fmt(data.partners[0].currentValue)}
               </p>
-              <p className="mt-1 text-xs text-emerald-700/80">
-                Capital inicial ({fmt(data.partners[0].capitalContributed)}) +
-                ganancia ({fmt(data.partners[0].netPnl)})
-              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-emerald-700/80">
+                <span>Capital {fmt(data.partners[0].capitalContributed)}</span>
+                <span className="text-emerald-600/60">+</span>
+                <span>Ganancia {fmt(data.partners[0].netPnl)}</span>
+              </div>
             </section>
           )}
 
-          <p className="border-t border-slate-100 pt-4 text-xs text-slate-400">
-            Reporte generado el {new Date(data.generatedAt).toLocaleString('es-ES')}
+          {hasMultiplePartners && (
+            <section>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                Disponible para retirar
+              </h3>
+              <dl className="divide-y divide-emerald-100 overflow-hidden rounded-xl bg-emerald-50 ring-1 ring-emerald-200">
+                {data.partners.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-baseline justify-between gap-4 px-4 py-3"
+                  >
+                    <dt className="text-sm">
+                      <span className="font-semibold text-emerald-900">{p.name}</span>
+                      <span className="ml-2 text-xs text-emerald-700/70">
+                        {p.shareOfFundPct.toFixed(2)}%
+                      </span>
+                    </dt>
+                    <dd className="text-base font-bold text-emerald-700">
+                      {fmt(p.currentValue)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          )}
+
+          <p className="text-right text-xs text-slate-400">
+            Generado el {new Date(data.generatedAt).toLocaleString('es-ES')}
           </p>
         </div>
       )}
