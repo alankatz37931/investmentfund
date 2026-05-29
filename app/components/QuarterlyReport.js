@@ -44,37 +44,20 @@ export default function QuarterlyReport({ data }) {
   const hasManager = data.fund.hasManagerPartner;
   const visiblePartners = data.partners.filter((p) => !p.isManager);
   const hasMultipleVisible = visiblePartners.length > 1;
-  const hasPerformanceFee = data.fund.performanceFeePct > 0;
-  const hasManagementFee = data.fund.managementFeePct > 0;
 
-  // Totales que se muestran en el reporte:
-  //  - Si NO hay gerente partner → totales del fondo entero
-  //  - Si hay gerente partner    → totales solo de los socios visibles (no gerente)
-  const reportCapital = hasManager
-    ? visiblePartners.reduce((acc, p) => acc + p.capitalContributed, 0)
-    : data.totals.totalLpCapital;
-
-  const reportCurrentValue = hasManager
-    ? visiblePartners.reduce((acc, p) => acc + p.currentValue, 0)
-    : data.totals.totalFundValue;
-
-  // "Ganancia bruta" mostrada = ganancia sobre el capital visible.
-  // Sin gerente: igual al grossPnl del fondo.
-  // Con gerente: la ganancia bruta atribuible a los socios = sum de (pro-rata - fee paid + fee paid)
-  //              = ganancia pre-fee de la porción LP del fondo.
-  const lpProRataGross = hasManager
-    ? data.totals.grossPnl * (reportCapital / (data.totals.totalLpCapital || 1))
-    : data.totals.grossPnl;
-  const reportGrossPnlPct =
-    reportCapital > 0 ? (lpProRataGross / reportCapital) * 100 : 0;
-
-  // Ganancia neta para socios = sumatoria de netPnl de socios visibles
+  // El reporte se centra en los socios visibles (no gerentes).
+  // Capital y ganancia agregada solo de ellos.
+  const reportCapital = visiblePartners.reduce(
+    (acc, p) => acc + p.capitalContributed,
+    0
+  );
   const reportNetPnlForVisible = visiblePartners.reduce(
     (acc, p) => acc + p.netPnl,
     0
   );
-
-  const grossPositive = lpProRataGross >= 0;
+  const reportNetPnlPct =
+    reportCapital > 0 ? (reportNetPnlForVisible / reportCapital) * 100 : 0;
+  const netPositive = reportNetPnlForVisible >= 0;
 
   const partnersLabel = joinNames(visiblePartners.map((p) => p.name));
 
@@ -111,38 +94,24 @@ export default function QuarterlyReport({ data }) {
             )}
             <Row label="Capital inicial" value={fmt(reportCapital)} />
             <Row
-              label="Ganancia bruta"
+              label="Ganancia"
               value={
                 <span>
                   <span
                     className={`mr-2 text-xs font-normal ${
-                      grossPositive ? 'text-emerald-600' : 'text-red-600'
+                      netPositive ? 'text-emerald-600' : 'text-red-600'
                     }`}
                   >
-                    {fmtPct(reportGrossPnlPct)}
+                    {fmtPct(reportNetPnlPct)}
                   </span>
                   <span
-                    className={
-                      grossPositive ? 'text-emerald-700' : 'text-red-700'
-                    }
+                    className={netPositive ? 'text-emerald-700' : 'text-red-700'}
                   >
-                    {fmt(lpProRataGross)}
+                    {fmt(reportNetPnlForVisible)}
                   </span>
                 </span>
               }
             />
-            {hasPerformanceFee && (
-              <Row
-                label="Ganancia para socios"
-                value={fmt(reportNetPnlForVisible)}
-              />
-            )}
-            {hasManagementFee && !hasManager && (
-              <Row
-                label={`Comisión anual (${data.fund.managementFeePct}%)`}
-                value={fmt(data.totals.annualManagementFee)}
-              />
-            )}
             {!hasMultipleVisible && visiblePartners[0] && (
               <Row
                 label="Disponible para retirar"
