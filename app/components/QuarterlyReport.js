@@ -17,6 +17,13 @@ const QUARTER_MONTHS = [
   'octubre – diciembre',
 ];
 
+function joinNames(names) {
+  if (names.length === 0) return '';
+  if (names.length === 1) return names[0];
+  if (names.length === 2) return `${names[0]} y ${names[1]}`;
+  return `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}`;
+}
+
 function Row({ label, value, valueClass = '' }) {
   return (
     <div className="flex items-baseline justify-between gap-4 px-4 py-3">
@@ -69,6 +76,8 @@ export default function QuarterlyReport({ data }) {
 
   const grossPositive = lpProRataGross >= 0;
 
+  const partnersLabel = joinNames(visiblePartners.map((p) => p.name));
+
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -77,6 +86,11 @@ export default function QuarterlyReport({ data }) {
           <p className="text-xs text-slate-500 sm:text-sm">
             {data.fund.name} — {quarter}
           </p>
+          {partnersLabel && (
+            <p className="mt-0.5 text-xs text-slate-600 sm:text-sm">
+              Para <strong>{partnersLabel}</strong>
+            </p>
+          )}
         </div>
         <button
           onClick={() => setOpen((v) => !v)}
